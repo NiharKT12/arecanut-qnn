@@ -48,13 +48,15 @@ Image → CNN → Feature Extraction → Quantum Neural Network → Classificati
 ---
 
 # 📁 Project Structure
+
+```text
 arecanut-qnn/
 │
 ├── app.py
 ├── best_arecanut_qnn.pth
 ├── requirements.txt
-├── README.md
-
+└── README.md
+```
 
 ---
 
@@ -70,9 +72,8 @@ cd arecanut-qnn
 Install the required dependencies:
 
 ```bash
-pip install torch torchvision pennylane streamlit pillow
+pip install -r requirements.txt
 ```
-*(Alternatively, if you have a `requirements.txt` file, run `pip install -r requirements.txt`)*
 
 ---
 
