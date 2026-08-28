@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arecanut Leaf Disease Detection</title>
+    <style>
+        :root {
+            --bg: #f4f8ef;
+            --card: #ffffff;
+            --ink: #1f3a2e;
+            --muted: #4f6d61;
+            --brand: #2d6a4f;
+            --error: #b42318;
+            --ring: rgba(64, 145, 108, 0.25);
+            --lime: #b7d86a;
+            --teal: #5bb7a6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle at 50% 20%, #ffffff 0, var(--bg) 54%, #dcebd8 100%);
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .ambient-scene {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            perspective: 900px;
+            overflow: hidden;
+        }
+
+        .orbit {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: min(78vw, 760px);
+            aspect-ratio: 1;
+            border: 1px solid rgba(45, 106, 79, 0.17);
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            animation: orbit-spin 18s linear infinite;
+        }
+
+        .orbit::before,
+        .orbit::after {
+            content: "";
+            position: absolute;
+            inset: 14%;
+            border: 1px solid rgba(91, 183, 166, 0.2);
+            border-radius: 50%;
+            transform: rotateX(68deg) rotateZ(25deg);
+        }
+
+        .orbit::after {
+            inset: 28%;
+            border-color: rgba(183, 216, 106, 0.28);
+            transform: rotateY(65deg) rotateZ(-20deg);
+        }
+
+        .orbital-dot {
+            position: absolute;
+            top: 7%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--lime);
+            box-shadow: 0 0 24px rgba(183, 216, 106, 0.8);
+        }
+
+        @keyframes orbit-spin {
+            to { transform: translate(-50%, -50%) rotateX(58deg) rotateZ(360deg); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+            background: var(--card);
+            border-radius: 18px;
+            border: 1px solid rgba(45, 106, 79, 0.12);
+            box-shadow: 0 18px 36px rgba(31, 58, 46, 0.1);
+            padding: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .top {
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            width: fit-content;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid #b8d9ba;
+            background: #f5fcf2;
+            letter-spacing: 0.35px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d6a3c;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2f9e52;
+        }
+
+        h1 {
+            margin: 10px 0 8px;
+            font-size: clamp(1.45rem, 2.6vw, 2rem);
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .content {
+            margin-top: 18px;
+        }
+
+        .panel {
+            position: relative;
+            border-radius: 14px;
+            border: 1px solid #d4e8dc;
+            background: #f8fcf8;
+            padding: 16px;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .file-input {
+            border: 2px dashed #9fc4b3;
+            border-radius: 14px;
+            padding: 16px;
+            background: #ffffff;
+        }
+
+        .file-input:focus-within {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            color: var(--ink);
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            width: fit-content;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+            cursor: pointer;
+            background: var(--brand);
+        }
+
+        button:disabled {
+            opacity: 0.9;
+            cursor: not-allowed;
+        }
+
+        .processing-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: none;
+            place-items: center;
+            border-radius: 14px;
+            background: rgba(248, 252, 248, 0.92);
+            backdrop-filter: blur(4px);
+        }
+
+        .processing-overlay.is-visible { display: grid; }
+
+        .loader-3d {
+            width: 82px;
+            height: 82px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: loader-float 1.8s ease-in-out infinite;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 8px;
+            border: 3px solid transparent;
+            border-top-color: var(--brand);
+            border-right-color: var(--teal);
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            animation: loader-spin 1s linear infinite;
+        }
+
+        .loader-ring:nth-child(2) {
+            inset: 18px;
+            border-top-color: var(--lime);
+            border-right-color: transparent;
+            animation-direction: reverse;
+            animation-duration: 0.75s;
+        }
+
+        .loader-core {
+            position: absolute;
+            inset: 33px;
+            border-radius: 50%;
+            background: var(--brand);
+            box-shadow: 0 0 22px rgba(45, 106, 79, 0.4);
+        }
+
+        .loader-label {
+            position: absolute;
+            top: calc(100% + 14px);
+            width: 180px;
+            transform: translateX(-50%);
+            text-align: center;
+            color: var(--brand);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        @keyframes loader-spin { to { transform: rotateX(65deg) rotateZ(360deg); } }
+        @keyframes loader-float { 50% { transform: translateY(-7px) rotateY(15deg); } }
+
+        .btn-content {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: #fff;
+            display: none;
+        }
+
+        .is-loading .spinner {
+            display: inline-block;
+        }
+
+        .result {
+            margin-top: 12px;
+            border-radius: 12px;
+            border: 1px solid #9bc89f;
+            background: #edf9ef;
+            color: #1e7c45;
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        .result-card {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: minmax(120px, 180px) 1fr;
+            gap: 16px;
+            align-items: center;
+            border: 1px solid #9bc89f;
+            border-radius: 12px;
+            background: #edf9ef;
+            padding: 12px;
+        }
+
+        .result-image {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #c4dfc6;
+        }
+
+        .result-label {
+            margin: 4px 0 0;
+            color: #1e7c45;
+            font-size: 1.15rem;
+        }
+
+        .image-title {
+            margin: 8px 0 0;
+            color: var(--ink);
+            font-size: 0.95rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .error {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #fef3f2;
+            border: 1px solid #fecdca;
+            color: var(--error);
+        }
+
+        .hint {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #4a6b59;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            .container {
+                padding: 18px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .result-card {
+                grid-template-columns: 1fr;
+            }
+
+            .result-image {
+                max-width: 220px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-scene" aria-hidden="true">
+        <div class="orbit"><span class="orbital-dot"></span></div>
+    </div>
+    <main class="container">
+        <section class="top">
+            <div class="tag"><span class="dot"></span>Quantum Leaf Analysis</div>
+            <h1>Arecanut Leaf Disease Detection</h1>
+            <p>Upload an arecanut leaf image and run the hybrid CNN + QNN disease detection pipeline.</p>
+        </section>
+
+        <section class="content">
+            <div class="panel">
+                <div id="processing-overlay" class="processing-overlay" aria-live="polite" aria-label="Processing image">
+                    <div class="loader-3d" aria-hidden="true">
+                        <span class="loader-ring"></span>
+                        <span class="loader-ring"></span>
+                        <span class="loader-core"></span>
+                        <span class="loader-label">Analyzing leaf</span>
+                    </div>
+                </div>
+                <form id="predict-form" action="/" method="post" enctype="multipart/form-data">
+                    <div class="file-input">
+                        <input type="file" name="leaf_image" accept=".jpg,.jpeg,.png" required>
+                    </div>
+                    <button id="predict-btn" type="submit">
+                        <span class="btn-content">
+                            <span class="spinner" aria-hidden="true"></span>
+                            <span id="btn-text">Predict Disease</span>
+                        </span>
+                    </button>
+                </form>
+                <p class="hint">Supported files: JPG, JPEG, PNG</p>
+
+                {% if error %}
+                    <div class="error">{{ error }}</div>
+                {% endif %}
+
+                {% if prediction %}
+                    <div class="result-card">
+                        <img class="result-image" src="{{ image_preview }}" alt="Uploaded arecanut leaf">
+                        <div>
+                            <p class="image-title">{{ image_title }}</p>
+                            <p class="hint">Analysis complete</p>
+                            <h2 class="result-label">Prediction: {{ prediction }}</h2>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("predict-form");
+        const button = document.getElementById("predict-btn");
+        const buttonText = document.getElementById("btn-text");
+        const processingOverlay = document.getElementById("processing-overlay");
+
+        if (form && button && buttonText && processingOverlay) {
+            form.addEventListener("submit", () => {
+                button.disabled = true;
+                button.classList.add("is-loading");
+                buttonText.textContent = "Processing...";
+                processingOverlay.classList.add("is-visible");
+            });
+        }
+    </script>
+</body>
+</html>

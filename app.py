@@ -1,10 +1,14 @@
-import streamlit as st
+import base64
+import io
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 import pennylane as qml
 
 from PIL import Image
+from flask import Flask, render_template, request
 
 # -----------------------
 # Quantum Setup
@@ -94,7 +98,7 @@ device = torch.device("cpu")
 model = HybridModel()
 
 model.load_state_dict(
-    torch.load("best_arecanut_qnn.pth", map_location=device)
+    torch.load(Path(__file__).with_name("best_arecanut_qnn.pth"), map_location=device)
 )
 
 model.eval()
@@ -130,24 +134,53 @@ def predict(image):
 
 
 # -----------------------
-# Streamlit UI
+# Flask UI
 # -----------------------
 
-st.title("Arecanut Leaf Disease Detection")
+app = Flask(__name__)
 
-st.write("Upload an Arecanut Leaf Image")
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 
-uploaded_file = st.file_uploader(
-    "Choose an image...",
-    type=["jpg","png","jpeg"]
-)
 
-if uploaded_file is not None:
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    image = Image.open(uploaded_file).convert("RGB")
 
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+@app.route("/", methods=["GET", "POST"])
+def index():
+    prediction = None
+    error = None
+    image_preview = None
+    image_title = None
 
-    result = predict(image)
+    if request.method == "POST":
+        file = request.files.get("leaf_image")
 
-    st.success(f"Prediction: {result}")
+        if file is None or file.filename == "":
+            error = "Please choose an image file before submitting."
+        elif not allowed_file(file.filename):
+            error = "Only .jpg, .jpeg, and .png files are supported."
+        else:
+            try:
+                image = Image.open(file.stream).convert("RGB")
+                image_title = file.filename
+                preview_buffer = io.BytesIO()
+                image.save(preview_buffer, format="PNG")
+                image_preview = "data:image/png;base64," + base64.b64encode(
+                    preview_buffer.getvalue()
+                ).decode("ascii")
+                prediction = predict(image)
+            except Exception:
+                error = "Unable to process this image. Please upload a valid image file."
+
+    return render_template(
+        "index.html",
+        prediction=prediction,
+        error=error,
+        image_preview=image_preview,
+        image_title=image_title,
+    )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

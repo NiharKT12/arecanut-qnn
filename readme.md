@@ -1,75 +1,259 @@
-# 🌴 Arecanut Leaf Disease Detection using Hybrid Quantum Neural Network
+# Arecanut Leaf Disease Detection using QNN
 
-This project detects **Arecanut Leaf Diseases** using a **Hybrid Classical + Quantum Neural Network (CNN + QNN)** and provides a **Streamlit Web Application** for real-time prediction.
+An AI-powered web application for detecting diseases in arecanut leaves from uploaded leaf images. The project combines **deep learning, Quantum Neural Network (QNN) concepts, and Flask** to provide an easy-to-use interface for leaf disease analysis.
 
-The model currently classifies:
+## 🌿 Project Overview
 
-- ✅ Healthy Leaf  
-- ⚠️ Yellow Leaf Disease  
-- 🍂 Leaf Spot Disease *(Future Work)*
+Arecanut is an important plantation crop, and early identification of leaf diseases can help reduce crop damage and improve agricultural productivity.
 
----
+This project provides a web-based system where users can:
 
-# 🚀 Features
+* Upload an image of an arecanut leaf
+* Analyze the uploaded image using a trained deep learning model
+* Detect the probable disease category
+* View the prediction through a simple and interactive web interface
 
-- Hybrid **CNN + Quantum Neural Network**
-- Real-time prediction using **Streamlit**
-- High accuracy (**~96% Test Accuracy**)
-- Checkpoint saving & resume training
-- Clean and simple UI
-- Expandable to multiple diseases
+The application is designed to demonstrate how **AI-based image classification** can be applied to agricultural disease detection.
 
 ---
 
-# 🧠 Model Architecture
+## ✨ Key Features
 
-Image → CNN → Feature Extraction → Quantum Neural Network → Classification
-
-### Technologies Used
-
-- PyTorch
-- PennyLane (Quantum Machine Learning)
-- Streamlit
-- Python
-- Torchvision
-- PIL
-
----
-
-# 📊 Model Performance
-
-| Metric | Value |
-|--------|------|
-| Training Accuracy | 96.30% |
-| Test Accuracy | **95.98%** |
-| Model Type | Hybrid CNN + QNN |
-| Dataset | Arecanut Leaf Images |
+* 🌱 **Arecanut Leaf Disease Detection**
+* 🧠 **AI/Deep Learning-based Image Classification**
+* ⚛️ **Quantum Neural Network (QNN) approach**
+* 📷 **Leaf image upload**
+* 🌐 **Flask-based web application**
+* 📊 **Prediction results through a user-friendly interface**
+* 💻 **Responsive and modern frontend**
+* 🔬 **Model trained for arecanut leaf analysis**
+* 🚀 **Easy to run locally**
 
 ---
 
-# 📁 Project Structure
+## 🛠️ Technologies Used
+
+### Backend
+
+* Python
+* Flask
+
+### Machine Learning / AI
+
+* PyTorch
+* Deep Learning
+* Quantum Neural Network concepts
+* Image Classification
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Development Tools
+
+* Jupyter Notebook
+* VS Code
+* Git & GitHub
+
+---
+
+## 📂 Project Structure
 
 ```text
-arecanut-qnn/
+Arecanut-Leaf-Disease-Detection/
 │
 ├── app.py
 ├── best_arecanut_qnn.pth
 ├── requirements.txt
-└── README.md
+├── README.md
+│
+├── notebook/
+│   └── [Training / experimentation notebooks]
+│
+├── templates/
+│   └── index.html
+│
+└── static/
+    ├── css/
+    ├── js/
+    └── images/
+```
+
+> The exact contents of the `notebook/` and `static/` folders may vary depending on the current version of the project.
+
+---
+
+## ⚙️ How the System Works
+
+The overall workflow of the application is:
+
+```text
+        User
+          │
+          ▼
+   Upload Leaf Image
+          │
+          ▼
+      Flask App
+          │
+          ▼
+   Image Preprocessing
+          │
+          ▼
+    Trained QNN Model
+          │
+          ▼
+    Disease Prediction
+          │
+          ▼
+   Result Displayed
+```
+
+### Step 1 — Image Upload
+
+The user uploads an image of an arecanut leaf through the web interface.
+
+### Step 2 — Preprocessing
+
+The uploaded image is processed into the format required by the trained model.
+
+### Step 3 — Model Prediction
+
+The processed image is passed to the trained model stored in:
+
+```text
+best_arecanut_qnn.pth
+```
+
+### Step 4 — Result
+
+The application generates a prediction and displays the result on the web interface.
+
+---
+
+## 🚀 Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/prathamssalian/Arecanut-Leaf-Disease-Detection.git
+```
+
+Move into the project directory:
+
+```bash
+cd Arecanut-Leaf-Disease-Detection
+```
+
+### 2. Create a Virtual Environment
+
+Windows:
+
+```bash
+python -m venv venv
+```
+
+Activate it:
+
+```bash
+venv\Scripts\activate
+```
+
+For macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+
+```bash
+python app.py
+```
+
+The Flask server should start locally.
+
+Open the URL shown in the terminal, typically:
+
+```text
+http://127.0.0.1:5000/
 ```
 
 ---
 
-# ⚙️ Installation
+## 🧪 Using the Application
 
-Clone the repository:
+1. Start the Flask application.
+2. Open the application in your browser.
+3. Upload an arecanut leaf image.
+4. Submit the image for analysis.
+5. The trained model processes the image.
+6. View the predicted disease/result.
 
-```bash
-git clone https://github.com/NiharKT12/arecanut-qnn.git
-cd arecanut-qnn
+---
+
+## 🧠 Model
+
+The project uses a trained model saved as:
+
+```text
+best_arecanut_qnn.pth
 ```
 
-Install the required dependencies:
+The model is intended to classify arecanut leaf images based on the patterns learned during training.
+
+The training and experimentation workflow is available in the `notebook/` directory.
+
+### Model Pipeline
+
+```text
+Leaf Image
+    ↓
+Image Preprocessing
+    ↓
+Feature Representation
+    ↓
+QNN / Deep Learning Model
+    ↓
+Classification
+    ↓
+Predicted Result
+```
+
+---
+
+## 📓 Jupyter Notebook
+
+The `notebook/` directory contains the notebooks used during the development and experimentation phase.
+
+These notebooks can be used to understand:
+
+* Dataset preparation
+* Image preprocessing
+* Model development
+* Model training
+* Model evaluation
+* Prediction experiments
+
+---
+
+## 📦 Requirements
+
+The required Python packages are listed in:
+
+```text
+requirements.txt
+```
+
+Install them using:
 
 ```bash
 pip install -r requirements.txt
@@ -77,16 +261,65 @@ pip install -r requirements.txt
 
 ---
 
-# 🚀 Usage
+## 🎯 Applications
 
-Run the Streamlit application locally:
+This project can be useful as a foundation for:
 
-```bash
-python -m streamlit run app.py
-```
+* 🌾 Smart agriculture
+* 🌱 Crop disease monitoring
+* 🔬 Agricultural research
+* 🤖 AI-based plant disease detection
+* 📱 Future mobile agricultural applications
+* 🚜 Precision agriculture systems
 
-1. Open the provided local URL (usually `http://localhost:8501`) in your web browser.
-2. Upload an image of an Arecanut leaf (`.jpg`, `.jpeg`, or `.png`).
-3. The hybrid quantum model will process the image and instantly output the prediction: **Healthy** or **Yellow Leaf**.
+---
 
+## 🔮 Future Enhancements
 
+The project can be further improved by adding:
+
+* [ ] More arecanut disease classes
+* [ ] Larger and more diverse datasets
+* [ ] Improved model accuracy
+* [ ] Confidence score for predictions
+* [ ] Multiple image analysis
+* [ ] Prediction history
+* [ ] Farmer-friendly multilingual interface
+* [ ] Mobile application
+* [ ] Cloud deployment
+* [ ] Real-time camera-based detection
+* [ ] Model performance dashboard
+* [ ] Integration with agricultural advisory systems
+
+---
+
+## ⚠️ Disclaimer
+
+This project is intended for **educational, research, and demonstration purposes**.
+
+Model predictions should not be considered a replacement for professional agricultural diagnosis. For actual crop management decisions, predictions should be verified by qualified agricultural experts.
+
+---
+
+## 👨‍💻 Author
+
+**Pratham S Salian**
+
+B.Tech – Information Science and Engineering
+NMAM Institute of Technology
+
+### Connect
+
+* GitHub: `https://github.com/prathamssalian`
+
+---
+
+## ⭐ Support
+
+If you find this project useful, consider giving the repository a ⭐ on GitHub.
+
+---
+
+## 📄 License
+
+This project can be used for educational and research purposes. If you plan to use the model, dataset, or project commercially, verify the licenses and usage rights of all third-party components and datasets used in the project.
